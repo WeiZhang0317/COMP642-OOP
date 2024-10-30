@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Order History
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="py-3 text-center">
+    <h2>Order History</h2>
+    <p class="lead">Review your history orders, including pending, paid, shipped, and canceled orders.</p>
+  </div>
+
+  <div class="card shadow-sm border-light">
+    <div class="card-body">
+      <table class="table table-hover table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Order Number</th>
+            <th scope="col">Order Date</th>
+            <th scope="col">Order Status</th>
+            <th scope="col">Total Cost</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <!-- Order index -->
+            <td>{{ loop.index }}</td>
+
+            <!-- Order number -->
+            <td>{{ item.order_number }}</td>
+
+            <!-- Order date formatted as YYYY-MM-DD -->
+            <td>{{ item.order_date.strftime('%Y-%m-%d') }}</td>
+
+            <!-- Order status with conditional badge color -->
+            <td>
+              <span class="badge 
+                {% if item.order_status == 'Delivered' %}badge-success
+                {% elif item.order_status == 'Canceled' %}badge-danger
+                {% elif item.order_status == 'Pending' %}badge-warning
+                {% else %}badge-info{% endif %}">
+                {{ item.order_status }}
+              </span>
+            </td>
+
+            <!-- Total cost formatted as currency -->
+            <td>${{ "{:.2f}".format(item.total_cost) }}</td>
+
+            <!-- Detail button -->
+            <td>
+              <a href="{{ url_for('order.detail', order_id=item.id) }}" class="btn btn-primary btn-sm">Detail</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

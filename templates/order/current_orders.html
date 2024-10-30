@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Current Orders
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="py-3 text-center">
+    <h2>Current Orders</h2>
+    <p class="lead">View all active and paid orders(don't include cancelled orders). Staff members can update orders status.</p>
+  </div>
+
+  <table class="table table-hover table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Order Number</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Order Date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Total Cost</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <!-- Order index -->
+        <td>{{ loop.index }}</td>
+
+        <!-- Order number -->
+        <td>{{ item.order_number }}</td>
+
+        <!-- Customer full name -->
+        <td>{{ item.customer.get_full_name() }}</td>
+
+        <!-- Order date with formatted date -->
+        <td>{{ item.order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+
+        <!-- Order status badge with color based on status -->
+        <td>
+          {% if item.order_status == "Paid" %}
+            <span class="badge badge-primary">{{ item.order_status }}</span>
+          {% elif item.order_status == "Pending" %}
+            <span class="badge badge-warning">{{ item.order_status }}</span>
+          {% elif item.order_status == "Shipped" %}
+            <span class="badge badge-success">{{ item.order_status }}</span>
+          {% else %}
+            <span class="badge badge-secondary">{{ item.order_status }}</span>
+          {% endif %}
+        </td>
+        <!-- Total cost -->
+        <td>${{ item.total_cost }}</td>
+
+        <!-- Operation buttons -->
+        <td>
+          <div class="btn-group" role="group" aria-label="Order actions">
+            <!-- Button to change to the next status if available -->
+            {% set next_status = OrderStatus.get_next_status(item.order_status) %}
+            {% if next_status %}
+              <a href="{{ url_for('order.update_status', order_id=item.id) }}" class="btn btn-success btn-sm">
+                Mark as {{ next_status }}
+              </a>
+            {% endif %}
+            <!-- Detail button for all users -->
+            <a href="{{ url_for('order.detail', order_id=item.id) }}" class="btn btn-primary btn-sm">Details</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

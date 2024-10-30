@@ -1,0 +1,83 @@
+{% extends 'base.html' %} 
+
+{% block title %}Customize Your Premade Box{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="py-5 text-center">
+    <h2>Customize Your Premade Box</h2>
+    <p class="lead">You can add up to {{ box.max_content }} items to this premade box.</p>
+  </div>
+
+  <div class="row">
+    <!-- Left Column: List of Vegetables -->
+    <div class="col-md-8">
+      <form method="post" action="{{ url_for('customize_premade_box', box_id=box.id) }}">
+        <div class="row">
+          {% for item in items %}
+          <div class="col-md-6">
+            <div class="card mb-4 box-shadow">
+              <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ item.name }}</h4>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">{{ item.name }}</h3>
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li class="text-success">Stock: {{ item.inventory.quantity }} available</li>
+                </ul>
+                <div class="form-group">
+                  <label for="quantity_{{ item.id }}">Quantity:</label>
+                  <input type="number" class="form-control" id="quantity_{{ item.id }}" 
+                         name="quantity_{{ item.id }}" value="0" min="0" 
+                         max="{{ item.inventory.quantity }}">
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Save Customization Button -->
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-lg btn-block btn-primary">Save Customization</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column: Items in the Premade Box -->
+    <div class="col-md-4">
+      <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+          <h4>Items in your Premade Box (Max: {{ box.max_content }})</h4>
+        </div>
+        <div class="card-body">
+          {% if selected_items %}
+          <!-- If items are already selected, display the list -->
+          <ul class="list-group">
+            {% for item in selected_items %}
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+              <div>
+                <h6 class="my-0">{{ item.name }}</h6>
+                <small class="text-muted">Quantity: {{ item.quantity }}</small>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <!-- If no items are selected, show this message -->
+          <p>Your Premade Box is currently empty.</p>
+          {% endif %}
+          
+          <!-- Back to Shopping Button -->
+          <button type="button" class="btn btn-lg btn-block btn-secondary mt-3" 
+                  onclick="location.href='{{ url_for('view_vegetables') }}';">
+            Back to shopping
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

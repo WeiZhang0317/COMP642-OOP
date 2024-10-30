@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ item.get_full_name() }} - Home
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <!-- Corporate Customer Information Card -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4>Corporate Customer Information</h4>
+    </div>
+    <div class="card-body">
+      <pre class="font-weight-normal text-dark">{{ item.get_corporate_details() }}</pre>
+    </div>
+  </div>
+
+  <!-- Sales Revenue Cards -->
+  <div class="row text-center">
+    <!-- Weekly Sales Revenue Card -->
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Weekly Sales Revenue</h5>
+          <p class="card-text display-4 text-primary">$ {{ weekly_sales }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Monthly Sales Revenue Card -->
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Monthly Sales Revenue</h5>
+          <p class="card-text display-4 text-success">$ {{ monthly_sales }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- Yearly Sales Revenue Card -->
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">Yearly Sales Revenue</h5>
+          <p class="card-text display-4 text-info">$ {{ yearly_sales }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

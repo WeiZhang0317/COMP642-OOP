@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="py-5 text-center">
+    <h2>Payment Page</h2>
+    <p class="lead">Choose your preferred payment method to complete the purchase.</p>
+  </div>
+
+  <form id="paymentForm" action="{{ url_for('process_payment', order_id=order_id) }}" method="post" novalidate onsubmit="validateForm(event)">
+
+
+
+    <!-- Delivery or Pickup -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Delivery or Pickup</h4>
+      </div>
+      <div class="card-body">
+        <p>Select your preferred option for receiving your order.</p>
+        <div class="form-group">
+          <label for="delivery_option">Choose Option:</label>
+          <select class="form-control" id="delivery_option" name="delivery_option" onchange="updateDeliveryFee()">
+            <option value="pickup" selected>Pickup (Free)</option>
+            <option value="delivery">Delivery (within 20 km - $10.00 fee)</option>
+          </select>
+        </div>
+        <p id="deliveryFeeMessage" class="text-muted">Note: A $10.00 delivery fee applies for orders within 20 km radius.</p>
+      </div>
+    </div>
+
+    <!-- Payment Method Selection -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header">
+        <h4>Select Payment Method</h4>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="payment_method" class="form-label">Payment Method</label>
+          <select class="form-control" id="payment_method" name="payment_method" onchange="togglePaymentFields(this.value)">
+            <!-- <option value="" disabled selected>--- Select your payment method ---</option> -->
+            <option value="credit_card">Credit Card</option>
+            <option value="debit_card">Debit Card</option>
+            <option value="account_balance">Account Balance (Available Balance: ${{ customer.cust_balance }})</option>
+          </select>
+          <div class="invalid-feedback">Please select a payment method.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shared Card Information -->
+    <div id="shared_card_info" style="display: none;">
+
+      <div id="credit_card_type" class="form-group" style="display: none;">
+        <label for="card_type">Card Type</label>
+        <select class="form-control" id="card_type" name="card_type">
+          <option value="Visa">Visa</option>
+          <option value="MasterCard">MasterCard</option>
+        </select>
+      </div>
+      
+      <div id="debit_bank_name" class="form-group" style="display: none;">
+        <label for="bank_name">Bank Name</label>
+        <input type="text" class="form-control" id="bank_name" name="bank_name">
+        <small class="form-text text-muted">Optional</small>
+      </div>
+
+      <!-- Card Details -->
+      <div class="form-group">
+        <label for="card_number">Card Number</label>
+        <input type="text" class="form-control" id="card_number" name="card_number" maxlength="16" pattern="\d{16}" placeholder="Enter your 16-digit card number" required>
+        <small class="form-text text-muted">Card number has to be 16 digit number.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="card_expiry_date">Expiry Date (MM/YYYY)</label>
+        <input type="text" class="form-control" id="card_expiry_date" name="card_expiry_date" pattern="(0[1-9]|1[0-2])/\d{4}" placeholder="MM/YYYY" required>
+        <small class="form-text text-muted">The expiry date for credit and debit cards must be after 01/2025.</small>
+      </div>     
+
+     
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input type="text" class="form-control" id="cvv" name="cvv" maxlength="3" pattern="\d{3}" placeholder="Enter 3-digit CVV" required>
+        <small class="form-text text-muted">Card number has to be 3 digit number.</small>
+      </div>
+    </div>
+    </div>
+
+    <!-- Confirm Payment Button -->
+    <button type="submit" class="btn btn-primary btn-lg btn-block" >Confirm Payment</button>
+    <a href="{{ url_for('current_order', order_id=order_id) }}" class="btn btn-secondary btn-lg btn-block mt-3">Back to Review Order</a>
+
+  </form>
+</div>
+
+<script>
+function togglePaymentFields(paymentMethod) {
+    const sharedCardInfo = document.getElementById('shared_card_info');
+    const creditCardType = document.getElementById('credit_card_type');
+    const debitBankName = document.getElementById('debit_bank_name');
+
+    if (paymentMethod === 'credit_card') {
+        sharedCardInfo.style.display = 'block';
+        creditCardType.style.display = 'block';
+        debitBankName.style.display = 'none';
+    } else if (paymentMethod === 'debit_card') {
+        sharedCardInfo.style.display = 'block';
+        creditCardType.style.display = 'none';
+        debitBankName.style.display = 'block';
+    } else if (paymentMethod === 'account_balance') {
+        sharedCardInfo.style.display = 'none'; 
+        creditCardType.style.display = 'none';
+        debitBankName.style.display = 'none';
+    }
+}
+
+
+ 
+  document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethodSelect = document.getElementById('payment_method');
+    paymentMethodSelect.value = 'credit_card'; 
+    togglePaymentFields('credit_card'); //
+  });
+
+
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      var forms = document.getElementsByTagName('form');
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          const paymentMethod = document.getElementById('payment_method').value;
+
+          if (paymentMethod === 'account_balance') {
+                    return; 
+                }
+
+          if (paymentMethod === 'credit_card') {
+       
+            if (!validateExpiryDate()) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }
+
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    }, false);
+  })();
+
+ 
+  function validateExpiryDate() {
+    const expiryInput = document.getElementById('card_expiry_date');
+    const expiryValue = expiryInput.value;
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1; 
+    
+    const regex = /^(0[1-9]|1[0-2])\/\d{4}$/;
+    if (!regex.test(expiryValue)) {
+      expiryInput.setCustomValidity("Invalid format. Please use MM/YYYY.");
+      return false;
+    }
+
+    const [month, year] = expiryValue.split('/').map(Number);
+
+    if (year < 2025 || (year === currentYear && month < currentMonth)) {
+      expiryInput.setCustomValidity("The expiry date must be a future date.");
+      return false;
+    }
+
+    expiryInput.setCustomValidity("");
+    return true;
+  }
+
+  function updateDeliveryFee() {
+    const deliveryOption = document.getElementById('delivery_option').value;
+    const deliveryFeeMessage = document.getElementById('deliveryFeeMessage');
+
+    if (deliveryOption === 'delivery') {
+      deliveryFeeMessage.textContent = "A $10.00 delivery fee has been applied.";
+    } else {
+      deliveryFeeMessage.textContent = "No delivery fee applied for pickup.";
+    }
+  }
+
+  function validateForm(event) {
+    const form = document.getElementById('paymentForm');
+    if (paymentMethod === 'account_balance') {
+        return;  
+    }
+
+    if (!form.checkValidity()) {
+        event.preventDefault(); 
+        alert("Please ensure all required fields are correctly filled before submitting."); 
+        form.classList.add('was-validated');  
+    }
+}
+
+
+
+</script>
+{% endblock %}
