@@ -51,7 +51,7 @@ def login():
             return redirect(url_for('view_vegetables'))
 
         else:
-            flash('Incorrect username or password. Please try again.', 'danger')
+            flash('Incorrect username or password. ', 'danger')
 
     return render_template('login.html')
 

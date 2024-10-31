@@ -16,23 +16,23 @@
   <body class="text-center">
 
 
-    <form class="form-signin" action="/login" method="POST">
+    <form class="form-signin" action="/login" method="POST" style="margin-top: 50px;">
 
           <!-- Flash messages section -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="container">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
       <img class="mb-4" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" width="72" height="72">
 
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
