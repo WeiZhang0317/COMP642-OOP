@@ -14,7 +14,25 @@
   </head>
 
   <body class="text-center">
+
+
     <form class="form-signin" action="/login" method="POST">
+
+          <!-- Flash messages section -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
       <img class="mb-4" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" width="72" height="72">
 
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
@@ -22,12 +40,8 @@
       <input type="text" id="inputUsername" name="username" class="form-control" placeholder="Username" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
       <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
-      <div class="checkbox mb-3">
-  
-      </div>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       <p class="mt-3 mb-3 text-muted">&copy; 2024 Fresh Harvest Veggies</p>
-    
     </form>
 
     <!-- Bootstrap core JavaScript via CDN -->
