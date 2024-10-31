@@ -193,13 +193,16 @@ function togglePaymentFields(paymentMethod) {
 
   function validateForm(event) {
     const form = document.getElementById('paymentForm');
+    const paymentMethod = document.getElementById('payment_method').value;
+
     if (paymentMethod === 'account_balance') {
-        return;  
+        return; // Skip validation if payment method is account balance
     }
 
-    if (!form.checkValidity()) {
+    if (!form.checkValidity() || (paymentMethod !== 'account_balance' && !validateExpiryDate())) {
         event.preventDefault(); 
-        alert("Please ensure all required fields are correctly filled before submitting."); 
+        event.stopPropagation();
+        alert("Please ensure all required fields are correctly filled before submitting.");
         form.classList.add('was-validated');  
     }
 }
