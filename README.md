@@ -2,6 +2,8 @@
 
 This project, developed for the COMP642 course, implements an order management system for a vegetable company, allowing both customers and staff to log in, view, and manage orders. The project uses SQLAlchemy for object-relational mapping and MySQL for database storage, with an MVC architecture separating models, views, and controllers.
 
+**Hosted on PythonAnywhere:** [https://weizhang1139462.pythonanywhere.com/](https://weizhang1139462.pythonanywhere.com/)
+
 ## Login Information
 
 ### Customer Logins
