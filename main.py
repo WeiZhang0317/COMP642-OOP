@@ -1,6 +1,5 @@
 # Create database tables within the app context
-
-from db_config import engine  
+ 
 from models import db  
 from models.customer import Customer, CorporateCustomer
 from models.item import Item, Veggie, WeightedVeggie, PackVeggie, UnitPriceVeggie, PremadeBox  
